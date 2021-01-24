@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  hubble:
+    tty: true
+    image: junofx/hubble:latest
+    ports:
+      - 5000:5000
+
+  polaris:
+    tty: true
+    hostname: polaris
+    image: junofx/polaris:0.1.0
+    env_file:
+      - .env
+    environment:
+      - RES=1920x1080
+      - LUNA=polaris
+    ports:
+      - 5901:5901
+
+  luna:
+    tty: true
+    image: junofx/luna:0.1.0
+    env_file:
+      - .env
+    environment:
+      - BUDDY=polaris
+    ports:
+      - 3030:3030
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  no-vnc:
+    tty: true
+    image: dougw/novnc
+    environment:
+      - REMOTE_PORT=5901
+      - REMOTE_HOST=polaris
+    ports:
+      - 8081:8081
